@@ -1,0 +1,61 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: barbershop-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-barber_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-barber_pass123}
+      POSTGRES_DB: ${POSTGRES_DB:-barbershop_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-barber_user} -d ${POSTGRES_DB:-barbershop_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: barbershop-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: barbershop-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: "8080"
+      DATABASE_URL: "jdbc:postgresql://postgres:5432/${POSTGRES_DB:-barbershop_db}"
+      DATABASE_USER: "${POSTGRES_USER:-barber_user}"
+      DATABASE_PASSWORD: "${POSTGRES_PASSWORD:-barber_pass123}"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      JWT_SECRET: "barbershop-ultra-secure-jwt-secret-key-2026-production"
+      JWT_ISSUER: "https://barbershop.local"
+      JWT_AUDIENCE: "barbershop-users"
+      JWT_REALM: "BarbershopRealm"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  redis_data:

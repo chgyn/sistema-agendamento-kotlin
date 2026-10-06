@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.barbershop.usecases.CreatePublicAppointmentUseCaseTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-06T01:17:41" hostname="charles-B550M-AORUS-ELITE" time="0.031">
+  <properties/>
+  <testcase name="deve criar agendamento com sucesso quando horario estiver disponivel()" classname="com.barbershop.usecases.CreatePublicAppointmentUseCaseTest" time="0.021"/>
+  <testcase name="deve lancar ScheduleConflictException quando houver sobreposicao de horarios()" classname="com.barbershop.usecases.CreatePublicAppointmentUseCaseTest" time="0.01"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
